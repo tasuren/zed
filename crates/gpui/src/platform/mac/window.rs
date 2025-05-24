@@ -1084,6 +1084,17 @@ impl PlatformWindow for MacWindow {
             .detach();
     }
 
+    fn start_window_drag(&self) {
+        let this = self.0.lock();
+        let window = this.native_window;
+
+        unsafe {
+            let app = NSApplication::sharedApplication(nil);
+            let mut event: id = msg_send![app, currentEvent];
+            let _: () = msg_send![window, performWindowDragWithEvent: event];
+        }
+    }
+
     fn toggle_fullscreen(&self) {
         let this = self.0.lock();
         let window = this.native_window;

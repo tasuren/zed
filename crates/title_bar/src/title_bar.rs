@@ -170,6 +170,11 @@ impl Render for TitleBar {
                     .border(px(1.))
                     .border_color(titlebar_color),
             })
+            .map(|this| {
+                this.on_mouse_down(MouseButton::Left, |_event, window, _app| {
+                    window.start_window_drag();
+                })
+            })
             .bg(titlebar_color)
             .content_stretch()
             .child(

@@ -1413,6 +1413,11 @@ impl Window {
     pub fn start_window_move(&self) {
         self.platform_window.start_window_move()
     }
+    
+    /// Moves the window during mouse drag.
+    pub fn start_window_drag(&self) {
+        self.platform_window.start_window_drag()
+    }
 
     /// When using client side decorations, set this to the width of the invisible decorations (Wayland and X11)
     pub fn set_client_inset(&mut self, inset: Pixels) {
