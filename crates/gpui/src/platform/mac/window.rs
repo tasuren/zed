@@ -670,6 +670,10 @@ impl MacWindow {
             if titlebar.map_or(true, |titlebar| titlebar.appears_transparent) {
                 native_window.setTitlebarAppearsTransparent_(YES);
                 native_window.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleHidden);
+                
+                // Disable the window dragging with default transparent title bar.
+                // The window dragging should be done by `start_window_drag` method.
+                native_window.setMovable_(NO);
             }
 
             native_view.setAutoresizingMask_(NSViewWidthSizable | NSViewHeightSizable);
