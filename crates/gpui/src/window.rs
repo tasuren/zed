@@ -1407,16 +1407,12 @@ impl Window {
         self.platform_window.show_window_menu(position)
     }
 
-    /// Tells the compositor to take control of window movement (Wayland and X11)
+    /// It starts the window dragging on mac.
+    /// On Wayland and X11, it tells the compositor to take control of window movement.
     ///
     /// Events may not be received during a move operation.
     pub fn start_window_move(&self) {
         self.platform_window.start_window_move()
-    }
-    
-    /// Moves the window during mouse drag.
-    pub fn start_window_drag(&self) {
-        self.platform_window.start_window_drag()
     }
 
     /// When using client side decorations, set this to the width of the invisible decorations (Wayland and X11)

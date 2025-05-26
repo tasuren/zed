@@ -670,9 +670,9 @@ impl MacWindow {
             if titlebar.map_or(true, |titlebar| titlebar.appears_transparent) {
                 native_window.setTitlebarAppearsTransparent_(YES);
                 native_window.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleHidden);
-                
+
                 // Disable the window dragging with default transparent title bar.
-                // The window dragging should be done by `start_window_drag` method.
+                // The window dragging should be done by `start_window_move` method.
                 native_window.setMovable_(NO);
             }
 
@@ -1088,17 +1088,6 @@ impl PlatformWindow for MacWindow {
             .detach();
     }
 
-    fn start_window_drag(&self) {
-        let this = self.0.lock();
-        let window = this.native_window;
-
-        unsafe {
-            let app = NSApplication::sharedApplication(nil);
-            let mut event: id = msg_send![app, currentEvent];
-            let _: () = msg_send![window, performWindowDragWithEvent: event];
-        }
-    }
-
     fn toggle_fullscreen(&self) {
         let this = self.0.lock();
         let window = this.native_window;
@@ -1163,6 +1152,17 @@ impl PlatformWindow for MacWindow {
 
     fn sprite_atlas(&self) -> Arc<dyn PlatformAtlas> {
         self.0.lock().renderer.sprite_atlas().clone()
+    }
+
+    fn start_window_move(&self) {
+        let this = self.0.lock();
+        let window = this.native_window;
+
+        unsafe {
+            let app = NSApplication::sharedApplication(nil);
+            let mut event: id = msg_send![app, currentEvent];
+            let _: () = msg_send![window, performWindowDragWithEvent: event];
+        }
     }
 
     fn gpu_specs(&self) -> Option<crate::GpuSpecs> {

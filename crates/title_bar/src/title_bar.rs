@@ -170,11 +170,6 @@ impl Render for TitleBar {
                     .border(px(1.))
                     .border_color(titlebar_color),
             })
-            .map(|this| {
-                this.on_mouse_down(MouseButton::Left, |_event, window, _app| {
-                    window.start_window_drag();
-                })
-            })
             .bg(titlebar_color)
             .content_stretch()
             .child(
@@ -250,6 +245,27 @@ impl Render for TitleBar {
                             }),
                     ),
             )
+            .on_mouse_down_out(cx.listener(move |this, _ev, _window, _cx| {
+                this.should_move = false;
+            }))
+            .on_mouse_up(
+                gpui::MouseButton::Left,
+                cx.listener(move |this, _ev, _window, _cx| {
+                    this.should_move = false;
+                }),
+            )
+            .on_mouse_down(
+                gpui::MouseButton::Left,
+                cx.listener(move |this, _ev, _window, _cx| {
+                    this.should_move = true;
+                }),
+            )
+            .on_mouse_move(cx.listener(move |this, _ev, window, _| {
+                if this.should_move {
+                    this.should_move = false;
+                    window.start_window_move();
+                }
+            }))
             .when(!window.is_fullscreen(), |title_bar| {
                 match self.platform_style {
                     PlatformStyle::Mac => title_bar,
@@ -263,27 +279,6 @@ impl Render for TitleBar {
                                         move |ev, window, _| window.show_window_menu(ev.position),
                                     )
                                 })
-                                .on_mouse_move(cx.listener(move |this, _ev, window, _| {
-                                    if this.should_move {
-                                        this.should_move = false;
-                                        window.start_window_move();
-                                    }
-                                }))
-                                .on_mouse_down_out(cx.listener(move |this, _ev, _window, _cx| {
-                                    this.should_move = false;
-                                }))
-                                .on_mouse_up(
-                                    gpui::MouseButton::Left,
-                                    cx.listener(move |this, _ev, _window, _cx| {
-                                        this.should_move = false;
-                                    }),
-                                )
-                                .on_mouse_down(
-                                    gpui::MouseButton::Left,
-                                    cx.listener(move |this, _ev, _window, _cx| {
-                                        this.should_move = true;
-                                    }),
-                                )
                         } else {
                             title_bar
                         }
